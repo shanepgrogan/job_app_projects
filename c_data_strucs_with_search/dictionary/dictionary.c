@@ -8,6 +8,7 @@
 #include "bintree.h"
 #include "dictionary.h"
 
+/* initializes dictionary by passing comparison and print functions */
 Dictionary* dict_initialize(int (*comp)(void*, void*), void (*print)(void*)){
 	Dictionary* dicPtr = malloc(sizeof(Dictionary));
 	dicPtr->tree = bintree_initialize(sizeof(Pair), "Pair", comp, print);
@@ -16,6 +17,7 @@ Dictionary* dict_initialize(int (*comp)(void*, void*), void (*print)(void*)){
 	return dicPtr;
 };
 
+/* inserts key-value pair into dictionary */
 bool dict_insert(Dictionary* dicPtr, void* keyPtr, void* valuePtr){
 	if(dicPtr == NULL || keyPtr == NULL || valuePtr == NULL){
 		return false;
@@ -27,6 +29,7 @@ bool dict_insert(Dictionary* dicPtr, void* keyPtr, void* valuePtr){
 	return true;	
 };
 
+/* recursive helper function for dict_get */
 void* _dict_get_recursive(Dictionary* dicPtr, BinaryTreeNode* node, void* keyPtr){
 	  // NULL check
           if(dicPtr == NULL || node == NULL || keyPtr == NULL){
@@ -65,6 +68,8 @@ void* _dict_get_recursive(Dictionary* dicPtr, BinaryTreeNode* node, void* keyPtr
 	
 }
 
+/* returns element from dictionary by iterating through
+	underlying binary tree recursively */
 void* dict_get(Dictionary* dicPtr, void* keyPtr){
         // NULL check
         if(dicPtr == NULL || keyPtr == NULL){
@@ -78,6 +83,7 @@ void* dict_get(Dictionary* dicPtr, void* keyPtr){
         }
 }
 
+/* recursive helper fucntion for dict_key_list */
 void _dict_key_list_recursive(ArrayList* alistPtr, BinaryTree* bintreePtr, BinaryTreeNode* node){
         if(alistPtr != NULL && bintreePtr != NULL && node != NULL){
 		Pair* pair = node->data;
@@ -87,6 +93,7 @@ void _dict_key_list_recursive(ArrayList* alistPtr, BinaryTree* bintreePtr, Binar
 	}
 };
 
+/* returns arraylist of keys in dictionary */
 ArrayList* dict_key_list(Dictionary* dicPtr, int size){
 	if(dicPtr != NULL && size >= 0){
 		ArrayList* keyList = alist_initialize(10, size, "char[50]");
@@ -95,6 +102,7 @@ ArrayList* dict_key_list(Dictionary* dicPtr, int size){
 	}	
 };
 
+/* tells whether dictionary contains a given key */
 bool dict_contains(Dictionary* dicPtr, void* keyPtr){
 	// NULL check
 	if(dicPtr == NULL || keyPtr == NULL){

@@ -23,7 +23,8 @@ char* name;
 
 int main(int argc, char *argv[]){
 
-	/* Step 1 */
+	/* Step 1: Get command-line arguments 
+		argv[1], argv[2], and argv[3] */
 	printf("Enter input:\n");
 	char inputString[MAX_SIZE];
 	fgets(inputString, MAX_SIZE, stdin);
@@ -33,19 +34,19 @@ int main(int argc, char *argv[]){
 	numProducers = atoi(strtok(NULL, " "));
 	numConsumers = atoi(strtok(NULL, " "));
 	
-	/* Step 2 */
+	/* Step 2: Initialize semaphores and mutex lock */
        	pthread_mutex_init(&lock, NULL);
 	sem_init(&empty, 0, BUFFER_SIZE);
 	sem_init(&full, 0, 0);
 	in = 0, out = 0;
 
-	/* Step 3 */
+	/* Step 3: Initialize buffer */
 	for(int k = 0; k < BUFFER_SIZE; k++){
 		buffer[k] = sizeof(buffer_item);
 		buffer[k] = -1;
 	}
 
-	/* Step 4 */	
+	/* Step 4: Create producer thread(s) */	
 	pthread_t prodArray[BUFFER_SIZE], conArray[BUFFER_SIZE];
 	
 	for(int i = 0; i < numProducers; i++){
@@ -54,7 +55,7 @@ int main(int argc, char *argv[]){
 		pthread_create(&prodArray[i], NULL, producer, data1);
 	}
 
-	/* Step 5 */
+	/* Step 5: Create consumer thread(s) */
 	for(int j = 0; j < numConsumers; j++){
 		parameters *data2 = (parameters*)malloc(sizeof(parameters));
 		data2->num = j;
@@ -63,7 +64,7 @@ int main(int argc, char *argv[]){
 	
 	sleep(sleepTime);
 
-	/* Step 6 */
+	/* Step 6: Sleep and thereafter terminate the C program */
 	pthread_mutex_destroy(&lock);
 	sem_destroy(&empty);
 	sem_destroy(&full);

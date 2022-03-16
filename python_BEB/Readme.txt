@@ -1,16 +1,5 @@
 // Readme.txt
 
-Assignment 4
-Shane Grogan
-B00327174
-CSCI 3171
-
-In this zip folder I’ve included the program as well as the example input file.
-
->In timberlea, my program is in CSCI3171/assignments/assn4
-
->In assn4 folder, you'll find a txt file ('Input.txt')
-
 >You may either copy your test input into this txt file, or you may copy your own txt
 file with the test inputs using the pathway provided above. Just make sure that if you 
 choose to provide your own txt file, please delete the current Input.txt file and then
