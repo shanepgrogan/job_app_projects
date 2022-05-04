@@ -2,8 +2,8 @@
 #include <stdbool.h>
 #include "linked_list.h"
 #include "bintree.h"
-#include "stack.h"
-#include "queue.h"
+#include "lib/stack.h"
+#include "lib/queue.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,16 +15,21 @@ BinaryTree::BinaryTree(){};
 /* Binary Tree initialized with inputs: size and type of data stored
 	and functions for comparison and print */
 BinaryTree::BinaryTree(int dataTypeSize, char* dataTypeName, int (*comp)(void* , void*), void (*print)(void*)){
-	BinaryTree* bintreePtr = malloc(sizeof(BinaryTree));
-	bintreePtr->top = NULL;
-        bintreePtr->itemSize = dataTypeSize;
-        bintreePtr->type = dataTypeName;
-        bintreePtr->compare = comp;
-        bintreePtr->print = print;
+	//BinaryTree* bintreePtr = malloc(sizeof(BinaryTree));
+	// bintreePtr->top = NULL;
+    //     bintreePtr->itemSize = dataTypeSize;
+    //     bintreePtr->type = dataTypeName;
+    //     bintreePtr->compare = comp;
+    //     bintreePtr->print = print;
+	this->top = NULL;
+	this->itemSize = dataTypeSize;
+	this->type = dataTypeName;
+	this->compare = comp;
+	this->print = print;
 
 };
 
-BinaryTree::BinaryTree(const BinaryTree&){};
+BinaryTree::BinaryTree(const BinaryTree& binTree){};
 
 /* creates node for Binary Tree */
 BinaryTreeNode* BinaryTree::create_node(int dataSize, void* elementPtr){
@@ -35,6 +40,11 @@ BinaryTreeNode* BinaryTree::create_node(int dataSize, void* elementPtr){
 	node->left = NULL;
 	node->right = NULL;
 	return node;
+};
+
+/* retreives top node of Binary Tree */
+BinaryTreeNode* BinaryTree::get_top_node(){
+	return top;
 };
 
 /* inserts element into Binary Tree */
@@ -202,7 +212,7 @@ void BinaryTree::print_depth_first(){
 	stackPtr->push(top);
 	BinaryTreeNode* node = NULL;
 	while(stackPtr->size() != 0){
-		node = stackPtr->pop();
+		node->data = stackPtr->pop();
 		print(node->data);
 		if(node->right != NULL){
 			stackPtr->push(node->right);
@@ -221,7 +231,7 @@ void BinaryTree::print_breadth_first(){
     BinaryTreeNode* node = NULL;
 	
 	while(qPtr->size() != 0){
-		node = queue_dequeue(qPtr);
+		node->data = qPtr->dequeue();
 		print(node->data);
 		if(node->left != NULL){
 			qPtr->enqueue(node->left);
@@ -241,8 +251,8 @@ bool BinaryTree::insert_replace(void* elementPtr){
 			return false;
 	}
 	
-	if(bintreePtr->top == NULL){
-		BinaryTreeNode* node = &create_node(itemSize, elementPtr);
+	if(this->top == NULL){
+		BinaryTreeNode* node = create_node(itemSize, elementPtr);
 		top = node;
 	} else {
 		return _insert_replace_recursive(top, elementPtr);

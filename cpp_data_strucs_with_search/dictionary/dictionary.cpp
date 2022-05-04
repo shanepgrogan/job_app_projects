@@ -4,112 +4,113 @@
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
-#include "array_list.h"
+#include "lib/array_list.h"
 #include "bintree.h"
 #include "dictionary.h"
 
+Dictionary::Dictionary(){};
+
 /* initializes dictionary by passing comparison and print functions */
-Dictionary* dict_initialize(int (*comp)(void*, void*), void (*print)(void*)){
-	Dictionary* dicPtr = malloc(sizeof(Dictionary));
-	dicPtr->tree = bintree_initialize(sizeof(Pair), "Pair", comp, print);
-	dicPtr->tree->compare = comp;
-	dicPtr->tree->print = print;
-	return dicPtr;
+Dictionary::Dictionary(int (*compare)(void*, void*), void (*print)(void*)){
+	//Dictionary* dicPtr = malloc(sizeof(Dictionary));
+	this->tree = &BinaryTree((int)sizeof(Pair), "Pair", compare, print);
+	//return dicPtr;
 };
 
+Dictionary::Dictionary(const Dictionary& dict){};
+
 /* inserts key-value pair into dictionary */
-bool dict_insert(Dictionary* dicPtr, void* keyPtr, void* valuePtr){
-	if(dicPtr == NULL || keyPtr == NULL || valuePtr == NULL){
+bool Dictionary::insert(void* keyPtr, void* valuePtr){
+	if(keyPtr == NULL || valuePtr == NULL){
 		return false;
 	}
-	Pair* pairPtr = malloc(sizeof(Pair));
+	Pair* pairPtr = new Pair;//malloc(sizeof(Pair));
 	pairPtr->first = keyPtr;
 	pairPtr->second = valuePtr;
-	bintree_insert_replace(dicPtr->tree, pairPtr);	
+	tree->insert_replace(pairPtr);	
 	return true;	
 };
 
 /* recursive helper function for dict_get */
-void* _dict_get_recursive(Dictionary* dicPtr, BinaryTreeNode* node, void* keyPtr){
-	  // NULL check
-          if(dicPtr == NULL || node == NULL || keyPtr == NULL){
-          	return NULL;
-          }
-	  
-	  if(node->data == NULL){
-	  	return NULL;
-	  }
+void* Dictionary::_get_recursive(BinaryTreeNode* node, void* keyPtr){
+	// NULL check
+	if(node == NULL || keyPtr == NULL){
+		return NULL;
+	}
+	
+	if(node->data == NULL){
+		return NULL;
+	}
 
-	  Pair* pair1 = node->data;
-	  Pair* pair2 = malloc(sizeof(Pair));
-	  pair2->first = keyPtr;
-	  
-	  int c = dicPtr->tree->compare(pair1, pair2);
-	  
-          if(c < 0){
-                  if(node->left != NULL){
-			  return _dict_get_recursive(dicPtr, node->left, keyPtr);
-                  } else {
-                          return NULL;
-                  }
-          } else if(c > 0){
-                  if(node->right != NULL){
-                          return _dict_get_recursive(dicPtr, node->right, keyPtr);;
-                  } else {
-                          return NULL;
-                  }
-          } else if (c == 0){
-                  if(node->data != NULL){
-                          return pair1->second;
-                  } else {
-                          return NULL;
-                  }
-          }
+	Pair* pair1 = node->data;
+	Pair* pair2 = keyPtr;
+	
+	int c = tree->compare(pair1, pair2);
+	
+	if(c < 0){
+		if(node->left != NULL){
+			return _get_recursive(node->left, keyPtr);
+		} else {
+			return NULL;
+		}
+	} else if(c > 0){
+		if(node->right != NULL){
+			return _get_recursive(node->right, keyPtr);;
+		} else {
+			return NULL;
+		}
+	} else if (c == 0){
+		if(node->data != NULL){
+			return pair1->second;
+		} else {
+			return NULL;
+		}
+	}
 	
 }
 
 /* returns element from dictionary by iterating through
 	underlying binary tree recursively */
-void* dict_get(Dictionary* dicPtr, void* keyPtr){
+void* Dictionary::get(void* keyPtr){
         // NULL check
-        if(dicPtr == NULL || keyPtr == NULL){
-                return NULL;
+        if(keyPtr == NULL){
+			return NULL;
         }
 	
-        if(dicPtr->tree->top == NULL){
-                return NULL;
+        if(tree->get_top_node() == NULL){
+			return NULL;
         } else {
-                return _dict_get_recursive(dicPtr, dicPtr->tree->top, keyPtr);
+			return _get_recursive(tree->get_top_node(), keyPtr);
         }
 }
 
 /* recursive helper fucntion for dict_key_list */
-void _dict_key_list_recursive(ArrayList* alistPtr, BinaryTree* bintreePtr, BinaryTreeNode* node){
+void Dictionary::_key_list_recursive(ArrayList* alistPtr, BinaryTree* bintreePtr, BinaryTreeNode* node){
         if(alistPtr != NULL && bintreePtr != NULL && node != NULL){
 		Pair* pair = node->data;
-		_dict_key_list_recursive(alistPtr, bintreePtr, node->left);
-		alist_add(alistPtr, pair->first);
-		_dict_key_list_recursive(alistPtr, bintreePtr, node->right);
+		_key_list_recursive(alistPtr, bintreePtr, node->left);
+		alistPtr->add(pair->first);
+		_key_list_recursive(alistPtr, bintreePtr, node->right);
 	}
 };
 
 /* returns arraylist of keys in dictionary */
-ArrayList* dict_key_list(Dictionary* dicPtr, int size){
-	if(dicPtr != NULL && size >= 0){
-		ArrayList* keyList = alist_initialize(10, size, "char[50]");
-		_dict_key_list_recursive(keyList, dicPtr->tree, dicPtr->tree->top);
+ArrayList* Dictionary::key_list(int size){
+	if(size >= 0){
+		ArrayList* keyList = ArrayList(10, size, "char[50]");
+		_key_list_recursive(keyList, tree, tree->get_top_node());
 		return keyList;
 	}	
 };
 
 /* tells whether dictionary contains a given key */
-bool dict_contains(Dictionary* dicPtr, void* keyPtr){
+bool Dictionary::contains(void* keyPtr){
 	// NULL check
-	if(dicPtr == NULL || keyPtr == NULL){
+	if(keyPtr == NULL){
 		return false;
 	}
-	Pair* pair = malloc(sizeof(Pair));
+	Pair* pair = new Pair;
 	pair->first = keyPtr;
-	return bintree_search(dicPtr->tree, pair);	
+	return tree->search(pair);	
 };
 

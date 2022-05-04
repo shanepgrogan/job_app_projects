@@ -7,14 +7,22 @@ typedef struct _Pair {
 	void* second;
 } Pair;
 
-typedef struct _Dictionary {
-	BinaryTree* tree;
-} Dictionary;
+class Dictionary {
+	
+	private:
+		BinaryTree* tree;
 
-Dictionary* dict_initialize(int (*)(void*, void*), void (*)(void*));
-bool dict_insert(Dictionary*, void*, void*);
-void* dict_get(Dictionary*, void*);
-ArrayList* dict_key_list(Dictionary*, int);
-bool dict_contains(Dictionary*, void*);
+	public:
+		Dictionary(){};
+		Dictionary(int (*)(void*, void*), void (*)(void*));
+		Dictionary(const Dictionary&){};
+		bool insert(void*, void*);
+		void* _get_recursive(BinaryTreeNode*, void*);
+		void* get(void*);
+		void _key_list_recursive(ArrayList*, BinaryTree*, BinaryTreeNode*);
+		ArrayList* key_list(int);
+		bool contains(void*);
+
+};
 
 #endif

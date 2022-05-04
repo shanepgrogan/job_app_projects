@@ -20,6 +20,7 @@ class BinaryTree{
 		BinaryTree(int, char*, int (*)(void*, void*), void (*)(void*)){};
 		BinaryTree(const BinaryTree&){};
 		BinaryTreeNode* create_node(int, void*);
+		BinaryTreeNode* get_top_node();
 		bool insert(void*);
 		bool search(void*);
 		void print_in_order();
